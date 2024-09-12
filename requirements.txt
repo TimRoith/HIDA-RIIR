@@ -1,0 +1,9 @@
+jupyterlab
+numpy==1.26.0
+matplotlib
+scikit-image
+torch
+torchvision
+ipywidgets
+pywavelets
+panel
