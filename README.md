@@ -9,7 +9,7 @@ This repository provides the python notebooks and code snippets for the course *
 
 The course is structured in 4 Jupyter notebooks with different topics and an additional setup notebook. We briefly detail the contents below.
 
-## Test your Setup: ```Package11-Setup-Test.ipynb```
+## Test your Setup: ```Package10-Setup-Test.ipynb```
 
 With this notebook you can check your python environment, such that all the other notebooks can be executed.
 
