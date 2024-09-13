@@ -1,6 +1,8 @@
 import numpy as np
 from operators import Grad, soft_shrinkage
 import pywt
+#from tqdm import tqdm
+from tqdm import tqdm_notebook as tqdm
 
 class optimizer:
     def __init__(self, max_it=10, verbosity=1, energy_fun=None):
@@ -11,7 +13,9 @@ class optimizer:
         self.cur_energy = float('inf')
         self.energy_hist = []
         
-    def solve(self):
+    def solve(self, use_tqdm = True):
+        itbar = tqdm(total=self.max_it) if use_tqdm else None
+         
         while not self.terminate():
             self.step()
             self.num_it+=1
@@ -22,13 +26,18 @@ class optimizer:
             if self.verbosity > 0:
                 print('Iteration: ' + str(self.num_it))
                 print('Energy: ' +str(self.cur_energy))
-                
+
+            if use_tqdm:
+                itbar.update(1)
+
+        if use_tqdm:
+            itbar.close()
         # return solution
         return self.x
       
     
-    def terminate(self):
-        if self.num_it > self.max_it:
+    def terminate(self): 
+        if self.num_it >= self.max_it:
             return True
         else:
             return False
@@ -54,10 +63,10 @@ class split_Bregman_TV(optimizer):
             
             
             def __call__(self,x):
-                return lv([gamma * A(x), 0.5 * self.grad(x)])
+                return lv([gamma**2 * A(x), 0.5 * self.grad(x)])
 
             def adjoint(self, p):
-                return gamma * A.adjoint(p[0]) + 0.5 * self.grad.adjoint(p[1])
+                return gamma**2 * A.adjoint(p[0]) + 0.5 * self.grad.adjoint(p[1])
             
         self.cg_op = cg_op()
         self.y = y
@@ -71,14 +80,14 @@ class split_Bregman_TV(optimizer):
     def step(self):
         self.d = soft_shrinkage(self.b + self.grad(self.x), self.lamda * self.gamma)
         self.b = self.b + self.grad(self.x) - self.d
-        inner_rhs = lv([self.gamma * self.y, 0.5 * (self.d - self.b)])
+        inner_rhs = lv([self.gamma**2 * self.y, 0.5 * (self.d - self.b)])
         self.x = self.solve_inner(inner_rhs)
 
         
     def solve_inner(self, rhs):
         return lscg(self.cg_op, rhs, self.x, 
                     verbosity = self.inner_verbosity, 
-                    max_it=self.max_inner_it).solve()
+                    max_it=self.max_inner_it).solve(use_tqdm=False)
     
     
 
