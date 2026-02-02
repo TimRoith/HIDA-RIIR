@@ -293,7 +293,7 @@ class admm(optimizer):
     def solve_inner(self, rhs):
         return lscg(self.cg_op, rhs, self.x, 
                     verbosity = self.inner_verbosity, 
-                    max_it=self.max_inner_it).solve()
+                    max_it=self.max_inner_it).solve(use_tqdm=False)
     
     
     

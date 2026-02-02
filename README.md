@@ -1,9 +1,10 @@
-# Helmholtz Summer School - Regularization in Image Reconstruction: From Model to Data Driven Methods
+# HIDA Course - Regularization in Image Reconstruction: From Model to Data Driven Methods
 
-This repository provides the python notebooks and code snippets for the course **Regularization in Image Reconstruction: From Model to Data Driven Methods** at the Helmholtz Incubator Summer Academy 2023. The course and the materials here are provided by
+This repository provides the python notebooks and code snippets for the HIDA course **Regularization in Image Reconstruction: From Model to Data Driven Methods**. The course and the materials here are provided by
 
 * Samira Kabri,
 * Lorenz Kuger,
+* Lukas Weigand,
 * Tim Roith and
 * Martin Burger.
 
