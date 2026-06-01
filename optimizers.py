@@ -79,9 +79,9 @@ class split_Bregman_TV(optimizer):
 
     def step(self):
         self.d = soft_shrinkage(self.b + self.grad(self.x), self.lamda * self.gamma)
-        self.b = self.b + self.grad(self.x) - self.d
         inner_rhs = lv([self.gamma**2 * self.y, 0.5 * (self.d - self.b)])
         self.x = self.solve_inner(inner_rhs)
+        self.b = self.b + self.grad(self.x) - self.d
 
         
     def solve_inner(self, rhs):
@@ -103,6 +103,7 @@ class ista_L1(optimizer):
         self.y = y
         self.lamda = lamda
         self.t = t
+        self.energy_fun = energy_fun
     
     def step(self,):
         grad = self.A.adjoint(self.A(self.x) - self.y)
@@ -255,7 +256,7 @@ class proxGD(optimizer):
     
     def step(self,):
         grad = self.A.adjoint(self.A(self.x) - self.y)
-        lin_up = self.x - 2 * self.t * grad
+        lin_up = self.x - self.t * grad
         self.x = self.prox(lin_up, self.lamda * self.t)
 
 
@@ -275,20 +276,20 @@ class admm(optimizer):
         self.inner_verbosity = 0
         self.max_inner_it = max_inner_it
         
-        class cg_op: 
+        class cg_op:
             def __call__(self,x):
-                return lv([A(x), rho * 0.5 * x])
+                return lv([A(x), np.sqrt(rho) * x])
 
             def adjoint(self, p):
-                return A.adjoint(p[0]) + rho * 0.5 * p[1]
+                return A.adjoint(p[0]) + np.sqrt(rho) * p[1]
 
         self.cg_op = cg_op()
 
     def step(self):
-        inner_rhs = lv([self.y, self.rho * 0.5 * (self.v - self.u)])
+        inner_rhs = lv([self.y, np.sqrt(self.rho) * (self.v - self.u)])
         self.x = self.solve_inner(inner_rhs)
-        self.v = self.prox(self.x + self.u ,self.lamda)
-        self.u = self.u + self.x -self.v
+        self.v = self.prox(self.x + self.u, self.lamda / self.rho)
+        self.u = self.u + self.x - self.v
 
     def solve_inner(self, rhs):
         return lscg(self.cg_op, rhs, self.x, 
