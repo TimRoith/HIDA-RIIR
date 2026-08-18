@@ -5,7 +5,9 @@ This repository provides the python notebooks and code snippets for the HIDA cou
 * Samira Kabri,
 * Lorenz Kuger,
 * Lukas Weigand,
-* Tim Roith and
+* Tim Roith
+* Lena Dunst
+* Alexander Denker and
 * Martin Burger.
 
 The course is structured in 4 Jupyter notebooks with different topics and an additional setup notebook. We briefly detail the contents below.
